@@ -27,9 +27,6 @@ public class EmployeeService {
         return employeeRepository.findAll();
     }
     public Optional<Employee> getEmployeeById(Long id) {
-        if (id == null) {
-            return "Employee not found";
-        }
         return employeeRepository.findById(id);
     }
     public Employee updateEmployee(Long id, Employee employee) {
