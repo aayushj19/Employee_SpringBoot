@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.Employee.model.Employee;
-import com.Employee.repository.EmployeeRepository;
+import com.Employee.model.EmployeeRepository;
 
 @Service
 public class EmployeeService {
@@ -31,6 +31,7 @@ public class EmployeeService {
     }
     public Employee updateEmployee(Long id, Employee employee) {
         Employee existingEmployee = getEmployeeById(id).orElse(null);
+
         if (existingEmployee != null) {
             existingEmployee.setName(employee.getName());
             existingEmployee.setSalary(employee.getSalary());
