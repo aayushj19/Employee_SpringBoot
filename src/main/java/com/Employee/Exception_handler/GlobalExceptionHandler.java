@@ -1,4 +1,4 @@
-package com.Employee.Exception_handler;
+package com.employee.Exception_handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(EmployeeNotFoundException.class)
-    public ResponseEntity<StudentErrorResponse> handleEmployeeNotFound(EmployeeNotFoundException ex) {
-        StudentErrorResponse error = new StudentErrorResponse(
+    public ResponseEntity<EmployeeErrorResponse> handleEmployeeNotFound(EmployeeNotFoundException ex) {
+        EmployeeErrorResponse error = new EmployeeErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
                 ex.getMessage(),
                 System.currentTimeMillis()

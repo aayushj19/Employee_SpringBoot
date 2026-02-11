@@ -33,5 +33,6 @@ build/
 .vscode/
 
 #environment variables
+.env
 application.properties
 hibernate.cfg.xml

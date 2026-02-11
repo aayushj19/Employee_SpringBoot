@@ -1,7 +1,10 @@
-package com.Employee.controller;
+package com.employee.controller;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,41 +15,61 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.Employee.model.Employee;
-import com.Employee.service.EmployeeService;
+import com.employee.model.Employee;
+import com.employee.service.EmployeeService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/employees")
 public class EmployeeController {
-
+    
+    private static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
     private final EmployeeService employeeService;
 
     public EmployeeController(EmployeeService employeeService) {
         this.employeeService = employeeService;
     }
 
-    @PostMapping("/create")
-    public Employee createEmployee(@RequestBody Employee employee) {
-        return employeeService.createEmployee(employee);
+    @PostMapping
+    public ResponseEntity<Employee> createEmployee(@Valid @RequestBody Employee employee) {
+        logger.info("POST /employees - Creating employee: {}", employee.getName());
+        Employee createdEmployee = employeeService.createEmployee(employee);
+        logger.info("Employee created with id: {}", createdEmployee.getId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdEmployee);
     }
 
-    @DeleteMapping("/delete/{id}")
-    public String deleteEmployee(@PathVariable Long id) {
-        employeeService.deleteEmployeeById(id);
-        return "Employee deleted successfully";
+    @GetMapping
+    public ResponseEntity<List<Employee>> getEmployees() {
+        logger.info("GET /employees - Fetching all employees");
+        List<Employee> employees = employeeService.getEmployees();
+        logger.info("Retrieved {} employees", employees.size());
+        return ResponseEntity.ok(employees);
     }
-    @GetMapping("/getAll")
-    public List<Employee> getEmployees() {
-        return employeeService.getEmployees();
-    }
-    @GetMapping("/get/{id}")
+
+    @GetMapping("/{id}")
     public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
-        return employeeService.getEmployeeById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        logger.info("GET /employees/{} - Fetching employee", id);
+        Employee employee = employeeService.getEmployeeById(id);
+        logger.info("Employee found: {}", employee.getName());
+        return ResponseEntity.ok(employee);
     }
-    @PutMapping("/update/{id}")
-    public Employee updateEmployee(@PathVariable Long id, @RequestBody Employee employee) {
-        return employeeService.updateEmployee(id, employee);
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Employee> updateEmployee(
+            @PathVariable Long id, 
+            @Valid @RequestBody Employee employee) {
+        logger.info("PUT /employees/{} - Updating employee", id);
+        Employee updatedEmployee = employeeService.updateEmployee(id, employee);
+        logger.info("Employee updated: {}", updatedEmployee.getName());
+        return ResponseEntity.ok(updatedEmployee);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
+        logger.info("DELETE /employees/{} - Deleting employee", id);
+        employeeService.deleteEmployeeById(id);
+        logger.info("Employee deleted with id: {}", id);
+        return ResponseEntity.noContent().build();
     }
 }
